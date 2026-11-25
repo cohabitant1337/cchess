@@ -1,0 +1,596 @@
+:root {
+  --bg-dark: #16181d;
+  --panel-bg: #22262e;
+  --border-color: #353b48;
+  --text-main: #f1f2f6;
+  --text-muted: #a4b0be;
+  --accent: #ffa502;
+  --danger: #ff4757;
+  --success: #2ed573;
+}
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+  user-select: none;
+  -webkit-tap-highlight-color: transparent;
+}
+
+html, body {
+  width: 100%;
+  height: 100%;
+  background: var(--bg-dark);
+  color: var(--text-main);
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  overflow: hidden;
+  touch-action: manipulation;
+  -webkit-touch-callout: none;
+  -webkit-user-select: none;
+  user-select: none;
+}
+
+#app {
+  display: flex;
+  flex-direction: column;
+  height: 100dvh;
+  max-width: 600px;
+  margin: 0 auto;
+  background: var(--bg-dark);
+}
+
+/* Верхняя панель */
+#top-bar {
+  background: var(--panel-bg);
+  padding: max(8px, env(safe-area-inset-top)) 12px 8px;
+  border-bottom: 1px solid var(--border-color);
+  flex-shrink: 0;
+}
+
+.header-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 6px;
+  flex-wrap: wrap;
+}
+
+.badge {
+  padding: 6px 12px;
+  border-radius: 20px;
+  font-weight: 700;
+  font-size: 0.9rem;
+  transition: all 0.2s;
+}
+
+.badge.white-turn {
+  background: #f1f2f6;
+  color: #1e272e;
+  box-shadow: 0 0 10px rgba(255, 255, 255, 0.25);
+}
+
+.badge.black-turn {
+  background: #2f3542;
+  color: #f1f2f6;
+  border: 1px solid #747d8c;
+}
+
+.badge.red-turn {
+  background: #ff4757;
+  color: #ffffff;
+  box-shadow: 0 0 10px rgba(255, 71, 87, 0.35);
+}
+
+.badge.blue-turn {
+  background: #1e90ff;
+  color: #ffffff;
+  box-shadow: 0 0 10px rgba(30, 144, 255, 0.35);
+}
+
+.controls {
+  display: flex;
+  gap: 5px;
+  flex-wrap: wrap;
+}
+
+.ctrl-btn {
+  background: #2f3542;
+  color: var(--text-main);
+  border: 1px solid var(--border-color);
+  border-radius: 8px;
+  padding: 5px 8px;
+  font-size: 0.78rem;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.ctrl-btn:active {
+  transform: scale(0.95);
+}
+
+.ctrl-btn.active {
+  border-color: var(--accent);
+  background: rgba(255, 165, 2, 0.2);
+  color: var(--accent);
+  box-shadow: 0 0 8px rgba(255, 165, 2, 0.3);
+}
+
+.timers-bar {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-top: 6px;
+  min-height: 4px;
+}
+
+.resource-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-top: 6px;
+}
+
+.mana-wrap {
+  flex: 1;
+  min-width: 0;
+}
+
+.mana-label {
+  font-size: 0.74rem;
+  font-weight: 700;
+  color: #70a1ff;
+  margin-bottom: 3px;
+}
+
+.mana-track {
+  width: 100%;
+  height: 7px;
+  background: #14171d;
+  border-radius: 99px;
+  overflow: hidden;
+  border: 1px solid #353b48;
+}
+
+.mana-fill {
+  height: 100%;
+  width: 40%;
+  background: linear-gradient(90deg, #1e90ff, #70a1ff);
+  transition: width 0.25s ease;
+}
+
+.skills-open-btn {
+  background: #2f3542;
+  color: var(--text-main);
+  border: 1px solid #4b5262;
+  border-radius: 10px;
+  padding: 5px 10px;
+  font-size: 0.8rem;
+  font-weight: 700;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex-shrink: 0;
+}
+
+.sp-badge {
+  background: rgba(255, 165, 2, 0.22);
+  color: var(--accent);
+  border: 1px solid var(--accent);
+  border-radius: 10px;
+  padding: 1px 6px;
+  font-size: 0.72rem;
+  font-weight: 800;
+}
+
+.timer-chip {
+  font-size: 0.75rem;
+  background: rgba(255, 165, 2, 0.15);
+  border: 1px solid var(--accent);
+  color: var(--accent);
+  padding: 2px 8px;
+  border-radius: 12px;
+}
+
+/* Игровая область Canvas */
+#board-container {
+  position: relative;
+  flex: 1;
+  width: 100%;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: radial-gradient(circle at center, #1e222b 0%, #121418 100%);
+}
+
+#board-canvas {
+  display: block;
+  width: 100%;
+  height: 100%;
+  touch-action: manipulation;
+  transition: transform 0.55s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+#board-canvas.flipped,
+#bottom-bar.flipped,
+.modal-card.flipped {
+  transform: rotate(180deg);
+}
+
+/* Нижняя панель */
+#bottom-bar {
+  background: var(--panel-bg);
+  border-top: 1px solid var(--border-color);
+  padding: 8px 10px max(12px, env(safe-area-inset-bottom));
+  flex-shrink: 0;
+  transition: transform 0.55s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.hint-row {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-bottom: 8px;
+}
+
+.cancel-btn {
+  background: rgba(255, 71, 87, 0.22);
+  border-color: var(--danger);
+  color: #ff6b81;
+}
+
+.skip-btn {
+  background: #2b303b;
+  border-color: #4b5262;
+  color: var(--text-muted);
+  font-size: 0.74rem;
+}
+
+.action-hint {
+  font-size: 0.82rem;
+  color: var(--accent);
+  text-align: center;
+  font-weight: 600;
+  min-height: 18px;
+}
+
+.abilities-panel {
+  display: flex;
+  gap: 8px;
+  overflow-x: auto;
+  padding-bottom: 4px;
+  scrollbar-width: none;
+}
+
+.abilities-panel::-webkit-scrollbar {
+  display: none;
+}
+
+.ability-btn {
+  flex: 0 0 auto;
+  min-width: 98px;
+  background: #2f3542;
+  border: 1px solid #4b5262;
+  border-radius: 10px;
+  padding: 8px 10px;
+  color: var(--text-main);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  position: relative;
+  transition: transform 0.1s, border-color 0.2s;
+}
+
+.ability-btn:active:not(:disabled) {
+  transform: scale(0.95);
+}
+
+.ability-btn.active {
+  border-color: var(--accent);
+  background: rgba(255, 165, 2, 0.2);
+  box-shadow: 0 0 10px rgba(255, 165, 2, 0.35);
+}
+
+.ability-btn:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+}
+
+.ab-title {
+  font-size: 0.78rem;
+  font-weight: 700;
+  text-align: center;
+}
+
+.ab-cd {
+  font-size: 0.7rem;
+  color: var(--text-muted);
+  margin-top: 3px;
+}
+
+/* Модальные окна */
+.modal {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.78);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 50;
+  padding: 16px;
+}
+
+.hidden {
+  display: none !important;
+}
+
+.modal-card {
+  background: var(--panel-bg);
+  border: 2px solid var(--border-color);
+  border-radius: 16px;
+  padding: 20px;
+  width: 100%;
+  max-width: 340px;
+  text-align: center;
+  box-shadow: 0 12px 32px rgba(0, 0, 0, 0.6);
+}
+
+.steal-card {
+  border-color: var(--accent);
+  animation: pulseBorder 1s infinite alternate;
+}
+
+@keyframes pulseBorder {
+  from { box-shadow: 0 0 10px rgba(255, 165, 2, 0.4); }
+  to { box-shadow: 0 0 25px rgba(255, 165, 2, 0.9); }
+}
+
+.steal-emoji {
+  font-size: 2rem;
+  margin-bottom: 6px;
+}
+
+.modal-card h2, .modal-card h3 {
+  margin-bottom: 8px;
+}
+
+.modal-card p {
+  font-size: 0.88rem;
+  color: var(--text-muted);
+  margin-bottom: 16px;
+}
+
+.steal-buttons {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-bottom: 10px;
+}
+
+.steal-buttons button {
+  flex: 1 1 45%;
+  padding: 12px 8px;
+  font-size: 0.92rem;
+  font-weight: 800;
+  border-radius: 10px;
+  border: none;
+  cursor: pointer;
+}
+
+.btn-white {
+  background: #f1f2f6;
+  color: #1e272e;
+}
+
+.btn-black {
+  background: #1e272e;
+  color: #f1f2f6;
+  border: 1px solid #747d8c !important;
+}
+
+.btn-red {
+  background: #ff4757;
+  color: #ffffff;
+}
+
+.btn-blue {
+  background: #1e90ff;
+  color: #ffffff;
+}
+
+.btn-skip, .btn-primary {
+  width: 100%;
+  padding: 10px;
+  border-radius: 10px;
+  border: none;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.btn-skip {
+  background: #353b48;
+  color: var(--text-muted);
+}
+
+.btn-primary {
+  background: var(--success);
+  color: #111;
+  font-size: 1rem;
+}
+
+/* Сетка направлений для Тарана */
+.dir-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 56px);
+  grid-template-rows: repeat(3, 56px);
+  gap: 8px;
+  justify-content: center;
+}
+
+.dir-btn {
+  background: #2f3542;
+  border: 1px solid #57606f;
+  border-radius: 12px;
+  font-size: 1.4rem;
+  color: #fff;
+  cursor: pointer;
+}
+
+.dir-btn.cancel {
+  background: rgba(255, 71, 87, 0.2);
+  border-color: var(--danger);
+  font-size: 1rem;
+}
+
+/* Древо навыков (адаптация под мобильный экран) */
+.skills-card {
+  max-width: 460px;
+  max-height: 86dvh;
+  display: flex;
+  flex-direction: column;
+  padding: 14px;
+}
+
+.skills-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  margin-bottom: 10px;
+}
+
+.skills-header h3 {
+  margin: 0;
+  font-size: 1.05rem;
+}
+
+.skills-header .dir-btn.cancel {
+  width: 34px;
+  height: 34px;
+  border-radius: 8px;
+}
+
+.skills-branches {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+  overflow-y: auto;
+  padding-right: 2px;
+}
+
+.skill-branch {
+  background: #1a1d24;
+  border: 1px solid var(--border-color);
+  border-radius: 12px;
+  padding: 8px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.branch-title {
+  font-size: 0.8rem;
+  font-weight: 800;
+  text-align: center;
+  color: var(--text-muted);
+  padding-bottom: 4px;
+  border-bottom: 1px solid var(--border-color);
+}
+
+.skill-node {
+  background: #2b303b;
+  border: 1px solid #4b5262;
+  border-radius: 10px;
+  padding: 8px;
+  text-align: left;
+  color: var(--text-main);
+  cursor: pointer;
+  transition: transform 0.1s, border-color 0.2s;
+}
+
+.skill-node:active:not(:disabled) {
+  transform: scale(0.97);
+}
+
+.skill-node.learned {
+  border-color: var(--success);
+  background: rgba(46, 213, 115, 0.14);
+}
+
+.skill-node.available {
+  border-color: var(--accent);
+  box-shadow: 0 0 8px rgba(255, 165, 2, 0.28);
+}
+
+.skill-node.locked {
+  opacity: 0.45;
+  cursor: not-allowed;
+}
+
+.skill-node.ultimate {
+  border-width: 2px;
+}
+
+.sk-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 4px;
+  font-size: 0.78rem;
+  font-weight: 800;
+  margin-bottom: 3px;
+}
+
+.sk-cost {
+  font-size: 0.68rem;
+  color: var(--accent);
+  white-space: nowrap;
+}
+
+.skill-node.learned .sk-cost {
+  color: var(--success);
+}
+
+.sk-desc {
+  font-size: 0.7rem;
+  color: var(--text-muted);
+  line-height: 1.25;
+}
+
+/* Мини-игра Крестики-нолики */
+.ttt-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 72px);
+  grid-template-rows: repeat(3, 72px);
+  gap: 8px;
+  justify-content: center;
+  margin-top: 10px;
+}
+
+.ttt-cell {
+  background: #2f3542;
+  border: 2px solid #4b5262;
+  border-radius: 12px;
+  font-size: 2rem;
+  font-weight: 900;
+  color: var(--text-main);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.ttt-cell.x { color: #ff6b81; }
+.ttt-cell.o { color: #70a1ff; }
+.ttt-cell:disabled { cursor: default; }
+
+.ab-mana {
+  font-size: 0.68rem;
+  color: #70a1ff;
+  margin-top: 2px;
+}

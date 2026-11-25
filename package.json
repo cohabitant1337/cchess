@@ -1,0 +1,14 @@
+{
+  "name": "crazy-chess",
+  "version": "1.0.0",
+  "description": "Хаос-Шахматы: Бункер & Мюнхгаузен — офлайн Android-игра на Capacitor",
+  "private": true,
+  "scripts": {
+    "cap:sync": "npx cap sync android"
+  },
+  "dependencies": {
+    "@capacitor/android": "^8.6.2",
+    "@capacitor/cli": "^8.6.2",
+    "@capacitor/core": "^8.6.2"
+  }
+}

@@ -1,0 +1,11 @@
+{
+  "appId": "com.mygames.crazychess",
+  "appName": "cchess",
+  "webDir": "www",
+  "backgroundColor": "#16181d",
+  "android": {
+    "allowMixedContent": false,
+    "captureInput": true,
+    "webContentsDebuggingEnabled": false
+  }
+}

@@ -1,0 +1,7 @@
+<?xml version='1.0' encoding='utf-8'?>
+<resources>
+    <string name="app_name">cchess</string>
+    <string name="title_activity_main">cchess</string>
+    <string name="package_name">com.mygames.crazychess</string>
+    <string name="custom_url_scheme">com.mygames.crazychess</string>
+</resources>

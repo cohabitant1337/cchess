@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" />
+  <title>cchess</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <div id="app">
+    <!-- Верхняя панель статуса -->
+    <header id="top-bar">
+      <div class="header-row">
+        <div id="turn-indicator" class="badge white-turn">Ход: Белые</div>
+        <div class="controls">
+          <button id="sound-btn" class="ctrl-btn active" title="Звук">🔊</button>
+          <button id="dota-btn" class="ctrl-btn" title="Режим Dota: Таверы и Древний">🏰 Dota</button>
+          <button id="tabletop-btn" class="ctrl-btn" title="Режим друг напротив друга">🔁 Напротив</button>
+          <button id="mode-btn" class="ctrl-btn" title="Переключить режим">👥 2 Игрока</button>
+          <button id="reset-btn" class="ctrl-btn" title="Новая игра">🔄</button>
+        </div>
+      </div>
+      <div class="resource-row">
+        <div class="mana-wrap">
+          <div class="mana-label" id="mana-text">💧 40/100 (+10)</div>
+          <div class="mana-track"><div id="mana-fill" class="mana-fill"></div></div>
+        </div>
+        <button id="skills-btn" class="skills-open-btn">🌳 Навыки <span id="sp-badge" class="sp-badge">0 SP</span></button>
+      </div>
+      <div id="timers-bar" class="timers-bar"></div>
+    </header>
+
+    <!-- Игровое поле Canvas -->
+    <main id="board-container">
+      <canvas id="board-canvas"></canvas>
+    </main>
+
+    <!-- Нижняя панель способностей и подсказок -->
+    <footer id="bottom-bar">
+      <div class="hint-row">
+        <div id="action-hint" class="action-hint">Выберите фигуру для хода или способность</div>
+        <button id="cancel-ability-btn" class="ctrl-btn cancel-btn hidden">✖ Отменить выбор</button>
+        <button id="checkers-done-btn" class="ctrl-btn hidden">Завершить прорыв</button>
+        <button id="skip-turn-btn" class="ctrl-btn skip-btn" title="Пропустить ход (+1 SP)">⏭ Пропуск</button>
+      </div>
+      <div id="abilities-panel" class="abilities-panel"></div>
+    </footer>
+
+    <!-- Оверлей: Событие «Украсть ход» -->
+    <div id="steal-modal" class="modal hidden">
+      <div class="modal-card steal-card">
+        <div class="steal-emoji">⚡⏱️⚡</div>
+        <h2>УКРАСТЬ ХОД!</h2>
+        <p>Временной разлом! Кто первый нажал или кому отдадим инициативу?</p>
+        <div class="steal-buttons">
+          <button id="steal-white-btn" class="btn-white">⚪ Белые</button>
+          <button id="steal-red-btn" class="btn-red hidden">🔴 Красные</button>
+          <button id="steal-black-btn" class="btn-black">⚫ Чёрные</button>
+          <button id="steal-blue-btn" class="btn-blue hidden">🔵 Синие</button>
+        </div>
+        <button id="steal-skip-btn" class="btn-skip">Пропустить (по очереди)</button>
+      </div>
+    </div>
+
+    <!-- Оверлей: Выбор направления для «Тарана» -->
+    <div id="ram-modal" class="modal hidden">
+      <div class="modal-card">
+        <h3>🚀 Куда таранить?</h3>
+        <p>Ладья сметёт всё на пути и аннигилируется!</p>
+        <div class="dir-grid">
+          <div></div>
+          <button class="dir-btn" data-dx="0" data-dy="-1">⬆️</button>
+          <div></div>
+          <button class="dir-btn" data-dx="-1" data-dy="0">⬅️</button>
+          <button id="ram-cancel-btn" class="dir-btn cancel">✖</button>
+          <button class="dir-btn" data-dx="1" data-dy="0">➡️</button>
+          <div></div>
+          <button class="dir-btn" data-dx="0" data-dy="1">⬇️</button>
+          <div></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Оверлей: Древо навыков -->
+    <div id="skills-modal" class="modal hidden">
+      <div class="modal-card skills-card">
+        <div class="skills-header">
+          <h3>🌳 Древо навыков</h3>
+          <span id="modal-sp-badge" class="sp-badge">0 SP</span>
+          <button id="skills-close-btn" class="dir-btn cancel">✖</button>
+        </div>
+        <div id="skills-tree-body" class="skills-branches"></div>
+      </div>
+    </div>
+
+    <!-- Оверлей: Мини-игра «Крестики-нолики» -->
+    <div id="ttt-modal" class="modal hidden">
+      <div class="modal-card">
+        <h3>⭕❌ Крестики-нолики</h3>
+        <p id="ttt-status">Ходят X</p>
+        <div id="ttt-grid" class="ttt-grid"></div>
+      </div>
+    </div>
+
+    <!-- Оверлей: Конец игры -->
+    <div id="gameover-modal" class="modal hidden">
+      <div class="modal-card">
+        <h2 id="winner-title">Победа!</h2>
+        <p id="winner-desc">Вражеский король повержен.</p>
+        <button id="play-again-btn" class="btn-primary">Сыграть ещё раз</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="game.js"></script>
+</body>
+</html>
